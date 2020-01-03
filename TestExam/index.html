@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+	crossorigin="anonymous">
+<title>The test 03-01-2020</title>
+</head>
+
+<body>
+	<div class="container">
+		<div class="form-inline m-3">
+            <h4 class="text-capitalize mt-3 text-danger">Tìm kiếm Sinh Viên:</h4>
+            <div class="col-12">
+                <label class="text-capitalize col-3 font-weight-bold">Tên
+                    Sinh Viên:</label>  <input type="text" id="nameSv" class="mr-5 w-25 ">
+                    
+                     <label
+                    class="text-capitalize mr-2 col-3 font-weight-bold">Địa Chỉ:</label>
+                     <input
+                    type="text" id="diachi" class="mr-4 w-25">
+            </div>
+			<button id="getSV" style="margin-top: 10px;" class="text-capitalize">Tìm Kiếm</button>
+		</div>
+		<div class="row">
+			<table class="table table-hover col-9" border="1">
+				<thead>
+					<tr>
+						<th>Mã Sinh Viên</th>
+						<th>Tên Sinh Viên</th>
+						<th>Lớp</th>
+						<th>Địa Chỉ</th>
+						<th>Năm Sinh</th>
+						<th>Email</th>
+						<th>Quê Quán</th>
+					</tr>
+				</thead>
+				<tbody id="show">
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<script>
+          var request = new XMLHttpRequest()
+        let load = ''
+        var show1 = document.getElementById("show");
+        request.open('GET', 'http://localhost:8080/api/getall', true)
+        request.onload = function () {
+            var data = JSON.parse(this.response)
+            console.log(data);
+            let load = ''
+            if (request.status >= 200 && request.status < 400) {
+                data.forEach(check => {
+                    load += `<tr> <th> ${check.maSv}</th>
+                         <th> ${check.tenSV}</th>
+                         <th> ${check.lopSv}</th>
+                         <th> ${check.address}</th>
+                         <th> ${check.bornSv}</th>
+                         <th> ${check.emailSv}</th>
+                         <th> ${check.queQuan}</th>
+                            </tr>`
+                })
+            } else {
+                console.log('error')
+            }
+            show1.innerHTML = load;
+        }
+       
+        request.send()
+    </script>
+	<script>
+        $(document).ready(function () {
+            $("#getSV").click(function () {
+                var show = document.getElementById("show");
+                $.ajax({ url: "http://localhost:8080/api/searchbynameandaddress?tenSv="+ $("#nameSv").val() +"&address=" +$("#diachi").val() },true)
+                    .then(function (data) {
+                       for (let i = 0; i < data.length; i++) {
+                            load += `<tr>
+                            <th> ${data[i].maSv}</th>
+                            <th> ${data[i].tenSV}</th>
+                            <th> ${data[i].lopSv}</th>
+                            <th> ${data[i].address}</th>
+                            <th> ${data[i].bornSv}</th>
+                            <th> ${data[i].emailSv}</th>
+                            <th> ${data[i].queQuan}</th>
+                            </tr>`
+                        show.innerHTML = load;
+                       }
+                    });
+            });
+        });
+    </script>
+</body>
+
+</html>
