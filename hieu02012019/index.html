@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+	crossorigin="anonymous">
+<title>Hiếu</title>
+</head>
+
+<body>
+	<div class="container">
+		<div class="form-inline m-3">
+			<h4 class="text-capitalize mt-3 text-danger">Tìm kiếm Sinh Viên:</h4>
+			<label class="text-capitalize mr-2 mt-2 font-weight-bold">Tên
+				Sinh Viên:</label> <input type="text" id="TSV" class="mr-5 w-25"> <label
+				class="text-capitalize mr-2 font-weight-bold">Địa Chỉ:</label> <input
+				type="text" id="DC" class="mr-4 w-25">
+			<button id="getSV" class="text-capitalize">Tìm Kiếm</button>
+		</div>
+		<div class="row">
+			<table class="table table-hover col-9" border="1">
+				<thead>
+					<tr>
+						<th>Mã Sinh Viên</th>
+						<th>Tên Sinh Viên</th>
+						<th>Dia chi</th>
+						<th>Khoa</th>
+						<th>Mon Hoc</th>
+						<th>Lop</th>
+						<th>Ngay Sinh</th>
+					</tr>
+				</thead>
+				<tbody id="show">
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<script>
+        var request = new XMLHttpRequest()
+        let load = ''
+        var show = document.getElementById("show");
+        request.open('GET', 'http://localhost:8080/sinhvien/getAllDataSinhVien', true)
+        request.onload = function () {
+            var data = JSON.parse(this.response)
+            console.log(data);
+            let load = ''
+            if (request.status >= 200 && request.status < 400) {
+                data.forEach(check => {
+                	 load += `<tr>
+                		 <th> ${check.id}</th>
+                         <th> ${check.tenSV}</th>
+                         <th> ${check.diaChi}</th>
+                         <th> ${check.khoa}</th>
+                         <th> ${check.monHoc}</th>
+                         <th> ${check.lop}</th>
+                         <th> ${check.ngaySinh}</th>
+                         </tr>`
+                })
+            } else {
+                console.log('error')
+            }
+            show.innerHTML = load;
+        }
+        request.send()
+    </script>
+	<script>
+        $(document).ready(function () {
+            $("#getSV").click(function () {
+                var show = document.getElementById("show");
+                $.ajax({ url: "http://localhost:8080/sinhvien/getAllSinhVienByNameAdress?TenSV="+ $("#TSV").val() +"&DiaChi=" +$("#DC").val() },true)
+                    .then(function (data) {
+                       for (let i = 0; i < data.length; i++) {
+                            load += `<tr>
+                            <th> ${data[i].id}</th>
+                            <th> ${data[i].tenSV}</th>
+                            <th> ${data[i].diaChi}</th>
+                            <th> ${data[i].khoa}</th>
+                            <th> ${data[i].monHoc}</th>
+                            <th> ${data[i].lop}</th>
+                            <th> ${data[i].ngaySinh}</th>
+                            </tr>`
+                        show.innerHTML = load;
+                       }
+                    });
+            });
+        });
+    </script>
+</body>
+
+</html>
